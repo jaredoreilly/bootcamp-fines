@@ -1,0 +1,24 @@
+{
+  "name": "bootcamp-fines",
+  "version": "1.0.0",
+  "description": "Bootcamp Fines",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaredoreilly/bootcamp-fines.git"
+  },
+  "author": "Jared O'Reilly",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaredoreilly/bootcamp-fines/issues"
+  },
+  "homepage": "https://github.com/jaredoreilly/bootcamp-fines#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "pg": "^8.7.1"
+  }
+}
