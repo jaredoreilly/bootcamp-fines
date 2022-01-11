@@ -183,9 +183,9 @@ function checkIfExistsLogin()
 	$("#checkIfExistsLogin").attr("disabled", true);
 	
 	var email = $("#email").val().trim();
-	console.log(email);
+	console.log("email", email);
 	var name = $("#name").val().trim();
-	console.log(name);
+	console.log("name", name);
 	
 	if(!email.endsWith("@entelect.co.za"))
 	{
@@ -197,14 +197,15 @@ function checkIfExistsLogin()
 	for(var i = 0; i < entelectuals.length; i++)
 	{
 		var thisEmail = entelectuals[i]["email"];
-		console.log(thisEmail);
 		if(thisEmail == email)
 		{
 			goodLogin(email);
+			return;
 		}
 	}
 	
 	$(".firstLogin").show();
+	$("#checkIfExistsLogin").attr("disabled", false);
 	
 	if(name != "")
 	{
