@@ -83,13 +83,17 @@ function renderFine(fine)
 	html += '		<strong>' + creator["name"] + '</strong> at <i>' + timestamp + '</i> ';
 	html += '	</div>';
 	html += '	<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 right">';
+	if(creatorID == myID)
+	{
+		html += '		<button id="edf' + fineID + '" class="btn btn-default editor" onclick="editFine()">Edit <i id="eef' + fineID + '" class="glyphicon glyphicon-edit"></i></button>';
+	}
 	html += '		<button id="upf' + fineID + '" class="btn ' + buttonClass + ' voter" onclick="toggleFineVote()">' + numUp + ' <i id="iif' + fineID + '" class="glyphicon glyphicon-arrow-up"></i></button>';
 	html += '	</div>';
 	html += '</div>';
 	html += '<div class="row">';
 	html += '	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 left">'
 	html += '		<div class="form-group" style="margin-top:10px">';
-	html += '			<textarea class="form-control" style="background-color:white" disabled>' + desc + '</textarea>';
+	html += '			<textarea id="fin' + fineID + '"class="form-control" style="background-color:white" disabled>' + desc + '</textarea>';
 	html += '		</div>';
 	html += '	</div>';
 	html += '</div>';
@@ -122,13 +126,17 @@ function renderReason(reason)
 	html += '		<strong>' + creator["name"] + '</strong> nominated <strong>' + nomination["name"] + '</strong> at <i>' + timestamp + '</i> ';
 	html += '	</div>';
 	html += '	<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 right">';
+	if(creatorID == myID)
+	{
+		html += '		<button id="edr' + reasonID + '" class="btn btn-default editor" onclick="editReason()">Edit <i id="eer' + reasonID + '" class="glyphicon glyphicon-edit"></i></button>';
+	}
 	html += '		<button id="upr' + reasonID + '" class="btn ' + buttonClass + ' voter" onclick="toggleReasonVote()">' + numUp + ' <i id="iir' + reasonID + '" class="glyphicon glyphicon-arrow-up"></i></button>';
 	html += '	</div>';
 	html += '</div>';
 	html += '<div class="row">';
 	html += '	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 left">'
 	html += '		<div class="form-group" style="margin-top:10px">';
-	html += '			<textarea class="form-control" style="background-color:white" disabled>' + reason["reason"]["description"] + '</textarea>';
+	html += '			<textarea id="rea' + reasonID + '" class="form-control" style="background-color:white" disabled>' + reason["reason"]["description"] + '</textarea>';
 	html += '		</div>';
 	html += '	</div>';
 	html += '</div>';
@@ -396,6 +404,72 @@ function toggleFineVote()
 		{
 			console.log(data);
 			refreshFromServer();
+		}
+	});
+}
+
+var reasonToEdit = null;
+function editReason()
+{
+	console.log(event.target.id);
+	reasonToEdit = parseInt(event.target.id.substring(3));
+	console.log(reasonToEdit);
+	var current = $("#rea"+reasonToEdit).val();
+	$("#reasonFillEdit").val(current);
+	$("#editReasonModal").modal('show');
+}
+
+function reallyEditReason()
+{
+	$("#editReason").attr("disabled", true);
+	var reasonID = reasonToEdit;
+	var newDesc = $("#reasonFillEdit").val();
+	
+	$.ajax({
+		url: '/changeReasonDescription',
+		type: 'POST',
+		contentType: 'application/json',
+		data: JSON.stringify({ reasonID: reasonID, newDescription: newDesc }),
+		dataType: 'json',
+		success: function(data)
+		{
+			console.log(data);
+			refreshFromServer();
+			$("#editReasonModal").modal('hide');
+			$("#editReason").attr("disabled", false);
+		}
+	});
+}
+
+var fineToEdit = null;
+function editFine()
+{
+	console.log(event.target.id);
+	fineToEdit = parseInt(event.target.id.substring(3));
+	console.log(fineToEdit);
+	var current = $("#fin"+fineToEdit).val();
+	$("#fineFillEdit").val(current);
+	$("#editFineModal").modal('show');
+}
+
+function reallyEditFine()
+{
+	$("#editFine").attr("disabled", true);
+	var fineID = fineToEdit;
+	var newDesc = $("#fineFillEdit").val();
+	
+	$.ajax({
+		url: '/changeFineDescription',
+		type: 'POST',
+		contentType: 'application/json',
+		data: JSON.stringify({ fineID: fineID, newDescription: newDesc }),
+		dataType: 'json',
+		success: function(data)
+		{
+			console.log(data);
+			refreshFromServer();
+			$("#editFineModal").modal('hide');
+			$("#editFine").attr("disabled", false);
 		}
 	});
 }

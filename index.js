@@ -236,6 +236,18 @@ async function insertFineVote(fineID, voterID, vote)
 }
 
 
+async function updateReasonDescription(reasonID, description)
+{
+	var result = await client.query("UPDATE reason SET description = $1 WHERE reasonID = $2;", [description, reasonID]);
+	return "Updated.";
+}
+async function updateFineDescription(fineID, description)
+{
+	var result = await client.query("UPDATE fine SET description = $1 WHERE fineID = $2;", [description, fineID]);
+	return "Updated.";
+}
+
+
 async function deleteReasonVote(reasonID, voterID)
 {
 	var result = await client.query("DELETE FROM reasonvote WHERE reasonID = $1 and voterID = $2;", [reasonID, voterID]);
@@ -460,6 +472,42 @@ async function toggleFineVote(req, res)
 		res.send({"status":"deleted"});
 	}
 	
+	
+	finish(req, res);
+}
+
+
+
+
+app.post('/changeReasonDescription', (req, res) => 
+{
+	start(req.body, res);
+	changeReasonDescription(req.body, res);
+});
+async function changeReasonDescription(req, res)
+{
+	var reasonID = req["reasonID"];
+	var newDescription = req["newDescription"];
+	
+	var result = await updateReasonDescription(reasonID, newDescription);
+	res.send({"status":"updated"});
+	
+	finish(req, res);
+}
+
+
+app.post('/changeFineDescription', (req, res) => 
+{
+	start(req.body, res);
+	changeFineDescription(req.body, res);
+});
+async function changeFineDescription(req, res)
+{
+	var fineID = req["fineID"];
+	var newDescription = req["newDescription"];
+	
+	var result = await updateFineDescription(fineID, newDescription);
+	res.send({"status":"updated"});
 	
 	finish(req, res);
 }

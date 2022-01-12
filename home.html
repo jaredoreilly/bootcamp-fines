@@ -59,7 +59,7 @@
 				</div>
 				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 left">
-						<p>Note that there is no editing (but I can change on the DB if you really need), so write carefully. Enjoy! - Jared</p>
+						<p>Remember to login before trying to vote or add content. You can also edit posts now. Fine away!</p>
 					</div>
 				</div>
 				<div class="row" style="margin-top:15px">
@@ -136,6 +136,48 @@
 						<textarea class="form-control" id="fineFill"></textarea>
 					</div>
 					<button id="addFine" class="btn btn-success" onclick="reallyAddFine()">Add Fine</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	<div id="editReasonModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Edit Reason</h4>
+				</div>
+				<div class="modal-body">
+					<p>Enter your updated reason for nomination below.</p>
+					<div class="form-group">
+						<textarea class="form-control" id="reasonFillEdit"></textarea>
+					</div>
+					<button id="editReason" class="btn btn-success" onclick="reallyEditReason()">Edit Reason</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	<div id="editFineModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Edit Fine</h4>
+				</div>
+				<div class="modal-body">
+					<p>Enter your updated suggested fine below.</p>
+					<div class="form-group">
+						<textarea class="form-control" id="fineFillEdit"></textarea>
+					</div>
+					<button id="editFine" class="btn btn-success" onclick="reallyEditFine()">Edit Fine</button>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
