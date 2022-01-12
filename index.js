@@ -5,7 +5,7 @@ var port = process.env.PORT || 4000;
 
 const { Client } = require('pg');
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,// || "postgres://ngvprpzhfruykh:28297b44d5b851c2c7afdcbbb49a78680812c4cc1d1985ffaafb04fad31f41c6@ec2-79-125-93-182.eu-west-1.compute.amazonaws.com:5432/darqu86ut075r6",
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
@@ -47,6 +47,11 @@ app.get('/resetTables', (req, res) =>
 });
 async function resetTables(req, res)
 {
+	// var result = await client.query("ALTER TABLE reason ADD COLUMN createdTime TIMESTAMP DEFAULT NOW();");
+	// console.log(result);
+	// var result = await client.query("ALTER TABLE fine ADD COLUMN createdTime TIMESTAMP DEFAULT NOW();");
+	// console.log(result);
+	
 	// var result = await client.query("DROP TABLE IF EXISTS reasonvote;");
 	// console.log(result);
 	// var result = await client.query("DROP TABLE IF EXISTS finevote;");
@@ -60,9 +65,9 @@ async function resetTables(req, res)
 	
 	// var result = await client.query("CREATE TABLE entelectual (userID SERIAL PRIMARY KEY, email TEXT UNIQUE NOT NULL, name TEXT NOT NULL, salt VARCHAR(10) NOT NULL, hash VARCHAR(256) NOT NULL);");
 	// console.log(result);
-	// var result = await client.query("CREATE TABLE reason (reasonID SERIAL PRIMARY KEY, creatorID INTEGER NOT NULL, nominationID INTEGER NOT NULL, description TEXT NOT NULL, FOREIGN KEY (creatorID) REFERENCES entelectual (userID), FOREIGN KEY (nominationID) REFERENCES entelectual (userID));");
+	// var result = await client.query("CREATE TABLE reason (reasonID SERIAL PRIMARY KEY, creatorID INTEGER NOT NULL, nominationID INTEGER NOT NULL, description TEXT NOT NULL, createdTime TIMESTAMP DEFAULT NOW(), FOREIGN KEY (creatorID) REFERENCES entelectual (userID), FOREIGN KEY (nominationID) REFERENCES entelectual (userID));");
 	// console.log(result);
-	// var result = await client.query("CREATE TABLE fine (fineID SERIAL PRIMARY KEY, reasonID INTEGER NOT NULL, creatorID INTEGER NOT NULL, description TEXT NOT NULL, FOREIGN KEY (reasonID) REFERENCES reason (reasonID), FOREIGN KEY (creatorID) REFERENCES entelectual (userID));");
+	// var result = await client.query("CREATE TABLE fine (fineID SERIAL PRIMARY KEY, reasonID INTEGER NOT NULL, creatorID INTEGER NOT NULL, description TEXT NOT NULL, createdTime TIMESTAMP DEFAULT NOW(), FOREIGN KEY (reasonID) REFERENCES reason (reasonID), FOREIGN KEY (creatorID) REFERENCES entelectual (userID));");
 	// console.log(result);
 	// var result = await client.query("CREATE TABLE reasonvote (mixID SERIAL PRIMARY KEY, reasonID INTEGER NOT NULL, voterID INTEGER NOT NULL, vote TEXT NOT NULL, FOREIGN KEY (reasonID) REFERENCES reason (reasonID), FOREIGN KEY (voterID) REFERENCES entelectual (userID));");
 	// console.log(result);
@@ -121,7 +126,6 @@ async function resetTables(req, res)
 	
 	finish(req, res);
 }
-
 
 
 async function selectEntelectualById(userID)

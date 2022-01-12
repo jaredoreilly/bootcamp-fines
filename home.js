@@ -49,11 +49,22 @@ function initEntelectualHashMap()
 	console.log(entelectualsHashMap);
 }
 
+function transformTimestamp(timestamp)
+{
+	var newT = new Date(timestamp);
+	newT.setTime(newT.getTime() + (2*60*60*1000));
+	newT = newT.toISOString();
+	newT = newT.replaceAll("T"," ");
+	newT = newT.substring(0, newT.length-8);
+	return newT;
+}
+
 function renderFine(fine)
 {
 	var myID = getIDOfEmail(localStorage.getItem("email"));
 	var reasonID = fine["fine"]["reasonid"];
 	var fineID = fine["fine"]["fineid"];
+	var timestamp = transformTimestamp(fine["fine"]["createdtime"]);
 	var creatorID = fine["fine"]["creatorid"];
 	var creator = entelectualsHashMap[creatorID];
 	var desc = fine["fine"]["description"];
@@ -69,7 +80,7 @@ function renderFine(fine)
 	
 	var html = '<div class="row">';
 	html += '	<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 left" style="padding-top:8px">'
-	html += '		' + reasonID + '.' + fineID + ' > <strong>' + creator["name"] + '</strong>';
+	html += '		<strong>' + creator["name"] + '</strong> at <i>' + timestamp + '</i> ';
 	html += '	</div>';
 	html += '	<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 right">';
 	html += '		<button id="upf' + fineID + '" class="btn ' + buttonClass + ' voter" onclick="toggleFineVote()">' + numUp + ' <i id="iif' + fineID + '" class="glyphicon glyphicon-arrow-up"></i></button>';
@@ -91,6 +102,7 @@ function renderReason(reason)
 	
 	var myID = getIDOfEmail(localStorage.getItem("email"));
 	var reasonID = reason["reason"]["reasonid"];
+	var timestamp = transformTimestamp(reason["reason"]["createdtime"]);
 	var creatorID = reason["reason"]["creatorid"];
 	var creator = entelectualsHashMap[creatorID];
 	var nominationID = reason["reason"]["nominationid"];
@@ -107,7 +119,7 @@ function renderReason(reason)
 	
 	html += '<div class="row">';
 	html += '	<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 left" style="padding-top:8px">'
-	html += '		' + reasonID + ' > <strong>' + creator["name"] + '</strong> nominated <strong>' + nomination["name"] + '</strong>';
+	html += '		<strong>' + creator["name"] + '</strong> nominated <strong>' + nomination["name"] + '</strong> at <i>' + timestamp + '</i> ';
 	html += '	</div>';
 	html += '	<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 right">';
 	html += '		<button id="upr' + reasonID + '" class="btn ' + buttonClass + ' voter" onclick="toggleReasonVote()">' + numUp + ' <i id="iir' + reasonID + '" class="glyphicon glyphicon-arrow-up"></i></button>';
@@ -133,8 +145,8 @@ function renderReason(reason)
 		
 	}
 	
-	html += '		<div class="row" style="margin-top:5px;margin-bottom:5px">';
-	html += '			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 right">'
+	html += '		<div class="row" style="margin-top:5px;margin-bottom:10px">';
+	html += '			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 left">'
 	html += '				<button id="f' + reasonID + '" class="btn btn-success" onclick="addFine()">Fine <i id="i' + reasonID + '"class="glyphicon glyphicon-plus"></i></button>';
 	html += '			</div>';
 	html += '		</div>';
