@@ -232,9 +232,13 @@ function addReason()
 	$("#reasonFill").val("");
 	$("#nominatePerson").empty();
 	
-	for(var i = 0; i < entelectuals.length; i++)
+	var copied = JSON.parse(JSON.stringify(entelectuals));
+	
+	copied.sort((a, b) => (a["name"] > b["name"]) ? 1 : -1);
+	
+	for(var i = 0; i < copied.length; i++)
 	{
-		var ent = entelectuals[i];
+		var ent = copied[i];
 		if(ent["email"] == localStorage.getItem("email"))
 		{
 			continue;
