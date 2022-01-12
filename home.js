@@ -425,6 +425,13 @@ function reallyEditReason()
 	var reasonID = reasonToEdit;
 	var newDesc = $("#reasonFillEdit").val();
 	
+	if(newDesc == "")
+	{
+		alert("Enter a reason.");
+		$("#editReason").attr("disabled", false);
+		return;
+	}
+	
 	$.ajax({
 		url: '/changeReasonDescription',
 		type: 'POST',
@@ -457,6 +464,13 @@ function reallyEditFine()
 	$("#editFine").attr("disabled", true);
 	var fineID = fineToEdit;
 	var newDesc = $("#fineFillEdit").val();
+	
+	if(newDesc == "")
+	{
+		alert("Enter a fine.");
+		$("#editFine").attr("disabled", false);
+		return;
+	}
 	
 	$.ajax({
 		url: '/changeFineDescription',
