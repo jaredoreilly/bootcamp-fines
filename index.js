@@ -3,6 +3,8 @@ var app = express();
 app.use(express.json());
 var port = process.env.PORT || 4000;
 
+var assert = require('assert');
+
 const { Client } = require('pg');
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
@@ -11,6 +13,7 @@ const client = new Client({
   }
 });
 client.connect();
+
 
 
 app.get('/', (req, res) => 
@@ -27,23 +30,55 @@ app.get('/home.js', (req, res) =>
 });
 
 
+var jaredRequestCounter = 0;
 function start(req, res)
 {
 	//client.connect();
+	jaredRequestCounter += 1;
+	req.jaredRequestCounter = jaredRequestCounter;
+	console.log(req.jaredRequestCounter + ": " + req.url + " started");
 }
-
 function finish(req, res)
 {
 	//client.end();
+	console.log(req.jaredRequestCounter + ": " + req.url + " ended");
 	res.end();
 }
 
+function checkType(value, type)
+{
+	switch(type)
+	{
+		case "num":
+			assert(Number(value) === value);
+			break;
+			
+		case "int":
+			checkType(value, "num");
+			assert(Number.isInteger(value));
+			break;
+		case "id":
+			checkType(value, "int");
+			assert(value > 0);
+			break;
+			
+		case "string":
+			assert(typeof value === 'string');
+			assert(value.length <= 2000);
+			break;
+		case "string_ne":
+			checkType(value, "string");
+			assert(value.length > 0);
+			break;
+		default:
+	}
+}
 
 
 app.get('/resetTables', (req, res) => 
 {
-	start(req.body, res);
-    resetTables(req.body, res);
+	start(req, res);
+    resetTables(req, res);
 });
 async function resetTables(req, res)
 {
@@ -128,197 +163,407 @@ async function resetTables(req, res)
 }
 
 
+
 async function selectEntelectualById(userID)
 {
-	var result = await client.query("SELECT * FROM entelectual WHERE userID = $1;", [userID]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM entelectual WHERE userID = $1;", [userID]);
+		result = result.rows[0];
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
 async function selectReasonById(reasonID)
 {
-	var result = await client.query("SELECT * FROM reason WHERE reasonID = $1;", [reasonID]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM reason WHERE reasonID = $1;", [reasonID]);
+		result = result.rows[0];
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
 async function selectFineById(fineID)
 {
-	var result = await client.query("SELECT * FROM fine WHERE fineID = $1;", [fineID]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM fine WHERE fineID = $1;", [fineID]);
+		result = result.rows[0];
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
 async function selectReasonVoteById(mixID)
 {
-	var result = await client.query("SELECT * FROM reasonvote WHERE mixID = $1;", [mixID]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM reasonvote WHERE mixID = $1;", [mixID]);
+		result = result.rows[0];
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
 async function selectNumReasonVoteByOther(reasonID, voterID)
 {
-	var result = await client.query("SELECT * FROM reasonvote WHERE reasonID = $1 AND voterID = $2;", [reasonID, voterID]);
-	result = result.rows.length;
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM reasonvote WHERE reasonID = $1 AND voterID = $2;", [reasonID, voterID]);
+		result = result.rows.length;
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return 0;
+	}
 }
 async function selectFineVoteById(mixID)
 {
-	var result = await client.query("SELECT * FROM finevote WHERE mixID = $1;", [mixID]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM finevote WHERE mixID = $1;", [mixID]);
+		result = result.rows[0];
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
 async function selectNumFineVoteByOther(fineID, voterID)
 {
-	var result = await client.query("SELECT * FROM finevote WHERE fineID = $1 AND voterID = $2;", [fineID, voterID]);
-	result = result.rows.length;
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM finevote WHERE fineID = $1 AND voterID = $2;", [fineID, voterID]);
+		result = result.rows.length;
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return 0;
+	}
 }
+
 
 
 async function selectAllEntelectuals()
 {
-	var result = await client.query("SELECT * FROM entelectual;");
-	result = result.rows;
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM entelectual;");
+		result = result.rows;
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return [];
+	}
 }
 async function selectAllReasons()
 {
-	var result = await client.query("SELECT * FROM reason;");
-	result = result.rows;
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM reason;");
+		result = result.rows;
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return [];
+	}
 }
 async function selectAllFines()
 {
-	var result = await client.query("SELECT * FROM fine;");
-	result = result.rows;
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM fine;");
+		result = result.rows;
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return [];
+	}
 }
 async function selectAllReasonVotes()
 {
-	var result = await client.query("SELECT * FROM reasonvote;");
-	result = result.rows;
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM reasonvote;");
+		result = result.rows;
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return [];
+	}
 }
 async function selectAllFineVotes()
 {
-	var result = await client.query("SELECT * FROM finevote;");
-	result = result.rows;
-	return result;
+	try
+	{
+		var result = await client.query("SELECT * FROM finevote;");
+		result = result.rows;
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return [];
+	}
 }
+
 
 
 async function insertEntelectual(email, name, salt, hash)
 {
-	var result = await client.query("INSERT INTO entelectual (email, name, salt, hash) VALUES ($1, $2, $3, $4) RETURNING *;", [email, name, salt, hash]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("INSERT INTO entelectual (email, name, salt, hash) VALUES ($1, $2, $3, $4) RETURNING *;", [email, name, salt, hash]);
+		result = result.rows[0];
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
 async function insertReason(creatorID, nominationID, description)
 {
-	var result = await client.query("INSERT INTO reason (creatorID, nominationID, description) VALUES ($1, $2, $3) RETURNING *;", [creatorID, nominationID, description]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("INSERT INTO reason (creatorID, nominationID, description) VALUES ($1, $2, $3) RETURNING *;", [creatorID, nominationID, description]);
+		result = result.rows[0];
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
 async function insertFine(reasonID, creatorID, description)
 {
-	var result = await client.query("INSERT INTO fine (reasonID, creatorID, description) VALUES ($1, $2, $3) RETURNING *;", [reasonID, creatorID, description]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("INSERT INTO fine (reasonID, creatorID, description) VALUES ($1, $2, $3) RETURNING *;", [reasonID, creatorID, description]);
+		result = result.rows[0];
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
 async function insertReasonVote(reasonID, voterID, vote)
 {
-	var result = await client.query("INSERT INTO reasonvote (reasonID, voterID, vote) VALUES ($1, $2, $3) RETURNING *;", [reasonID, voterID, vote]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("INSERT INTO reasonvote (reasonID, voterID, vote) VALUES ($1, $2, $3) RETURNING *;", [reasonID, voterID, vote]);
+		result = result.rows[0];
+		return result;	
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
 async function insertFineVote(fineID, voterID, vote)
 {
-	var result = await client.query("INSERT INTO finevote (fineID, voterID, vote) VALUES ($1, $2, $3) RETURNING *;", [fineID, voterID, vote]);
-	result = result.rows[0];
-	return result;
+	try
+	{
+		var result = await client.query("INSERT INTO finevote (fineID, voterID, vote) VALUES ($1, $2, $3) RETURNING *;", [fineID, voterID, vote]);
+		result = result.rows[0];
+		return result;
+	}
+	catch(err)
+	{
+		console.log(err);
+		return {};
+	}
 }
+
 
 
 async function updateReasonDescription(reasonID, description)
 {
-	var result = await client.query("UPDATE reason SET description = $1 WHERE reasonID = $2;", [description, reasonID]);
-	return "Updated.";
+	try
+	{
+		var result = await client.query("UPDATE reason SET description = $1 WHERE reasonID = $2;", [description, reasonID]);
+		return "Updated.";
+	}
+	catch(err)
+	{
+		console.log(err);
+		return "Failed.";
+	}
 }
 async function updateFineDescription(fineID, description)
 {
-	var result = await client.query("UPDATE fine SET description = $1 WHERE fineID = $2;", [description, fineID]);
-	return "Updated.";
+	try
+	{
+		var result = await client.query("UPDATE fine SET description = $1 WHERE fineID = $2;", [description, fineID]);
+		return "Updated.";
+	}
+	catch(err)
+	{
+		console.log(err);
+		return "Failed.";
+	}
 }
+
 
 
 async function deleteReasonVote(reasonID, voterID)
 {
-	var result = await client.query("DELETE FROM reasonvote WHERE reasonID = $1 and voterID = $2;", [reasonID, voterID]);
-	return "Deleted";
+	try
+	{
+		var result = await client.query("DELETE FROM reasonvote WHERE reasonID = $1 and voterID = $2;", [reasonID, voterID]);
+		return "Deleted";
+	}
+	catch(err)
+	{
+		console.log(err);
+		return "Failed.";
+	}
 }
 async function deleteFineVote(fineID, voterID)
 {
-	var result = await client.query("DELETE FROM finevote WHERE fineID = $1 and voterID = $2;", [fineID, voterID]);
-	return "Deleted";
+	try
+	{
+		var result = await client.query("DELETE FROM finevote WHERE fineID = $1 and voterID = $2;", [fineID, voterID]);
+		return "Deleted";
+	}
+	catch(err)
+	{
+		console.log(err);
+		return "Failed.";
+	}
 }
 
 
 
 app.get('/fetchEntelectual', (req, res) => 
 {
-	start(req.body, res);
-	fetchEntelectual(req.body, res);
+	start(req, res);
+	fetchEntelectual(req, res);
 });
 async function fetchEntelectual(req, res)
 {
-	var userID = 1;
-	
-	var entelectual = await selectEntelectualById(userID);
-	delete entelectual["salt"];
-	delete entelectual["hash"];
-	
-	res.send({"entelectual": entelectual});
-	
-	finish(req, res);
+	try
+	{
+		var userID = req.body["userID"];
+		checkType(userID, "id");
+		
+		var entelectual = await selectEntelectualById(userID);
+		delete entelectual["salt"];
+		delete entelectual["hash"];
+		
+		res.send({"data": entelectual});
+	}
+	catch(err)
+	{
+		console.log(err);
+		res.send({"data": {}});
+	}
+	finally
+	{
+		finish(req, res);
+	}
 }
 
 app.get('/fetchAllEntelectuals', (req, res) => 
 {
-	start(req.body, res);
-	fetchAllEntelectuals(req.body, res);
+	start(req, res);
+	fetchAllEntelectuals(req, res);
 });
+
+
 async function fetchAllEntelectuals(req, res)
 {	
-	var entelectuals = await selectAllEntelectuals();
-	for(var i = 0; i < entelectuals.length; i++)
+	try
 	{
-		delete entelectuals[i]["salt"];
-		delete entelectuals[i]["hash"];
+		var entelectuals = await selectAllEntelectuals();
+		for(var i = 0; i < entelectuals.length; i++)
+		{
+			delete entelectuals[i]["salt"];
+			delete entelectuals[i]["hash"];
+		}
+		
+		res.send({"data": entelectuals});
 	}
-	
-	res.send({"data": entelectuals});
-	
-	finish(req, res);
+	catch(err)
+	{
+		console.log(err);
+		res.send({"data": []});
+	}
+	finally
+	{
+		finish(req, res);
+	}
 }
+
 
 app.post('/addEntelectual', (req, res) => 
 {
-	start(req.body, res);
-	console.log(req.body);
-	addEntelectual(req.body, res);
+	start(req, res);
+	addEntelectual(req, res);
 });
 async function addEntelectual(req, res)
 {
-	console.log(req);
-	var email = req["email"].trim();
-	var name = req["name"].trim();
-	var salt = "123";
-	var hash = "123";
-	
-	var entelectual = await insertEntelectual(email, name, salt, hash);
-	delete entelectual["salt"];
-	delete entelectual["hash"];
-	
-	res.send(({"data": entelectual}));
-	
-	finish(req, res);
+	try
+	{
+		var email = req.body["email"];
+		checkType(email, "string_ne");
+		var name = req.body["name"];
+		checkType(name, "string_ne");
+		var salt = "123";
+		var hash = "123";
+		
+		email = email.trim();
+		name = name.trim();
+		
+		var entelectual = await insertEntelectual(email, name, salt, hash);
+		delete entelectual["salt"];
+		delete entelectual["hash"];
+		
+		res.send(({"data": entelectual}));
+	}
+	catch(err)
+	{
+		console.log(err);
+		res.send({"data": {}});
+	}
+	finally
+	{
+		finish(req, res);
+	}
 }
 
 
@@ -326,125 +571,177 @@ async function addEntelectual(req, res)
 
 app.get('/fetchAllReasonData', (req, res) => 
 {
-	start(req.body, res);
-	fetchAllReasonData(req.body, res);
+	start(req, res);
+	fetchAllReasonData(req, res);
 });
 async function fetchAllReasonData(req, res)
 {
-	var reasons = await selectAllReasons();
-	var fines = await selectAllFines();
-	var reasonvotes = await selectAllReasonVotes();
-	var finevotes = await selectAllFineVotes();
-	
-	var reasonObj = {};
-	for(var i = 0; i < reasons.length; i++)
+	try
 	{
-		var reasonID = reasons[i]["reasonid"];
-		reasonObj[reasonID] = {};
-		reasonObj[reasonID]["reason"] = reasons[i];
-		reasonObj[reasonID]["votes"] = [];
-		reasonObj[reasonID]["fines"] = [];
+		var reasons = await selectAllReasons();
+		var fines = await selectAllFines();
+		var reasonvotes = await selectAllReasonVotes();
+		var finevotes = await selectAllFineVotes();
+		
+		var reasonObj = {};
+		for(var i = 0; i < reasons.length; i++)
+		{
+			var reasonID = reasons[i]["reasonid"];
+			reasonObj[reasonID] = {};
+			reasonObj[reasonID]["reason"] = reasons[i];
+			reasonObj[reasonID]["votes"] = [];
+			reasonObj[reasonID]["fines"] = [];
+		}
+		for(var i = 0; i < reasonvotes.length; i++)
+		{
+			var reasonID = reasonvotes[i]["reasonid"];
+			reasonObj[reasonID]["votes"].push(reasonvotes[i]);
+		}
+		
+		var fineObj = {};
+		for(var i = 0; i < fines.length; i++)
+		{
+			var fineID = fines[i]["fineid"];
+			fineObj[fineID] = {};
+			fineObj[fineID]["fine"] = fines[i];
+			fineObj[fineID]["votes"] = [];
+		}
+		for(var i = 0; i < finevotes.length; i++)
+		{
+			var fineID = finevotes[i]["fineid"];
+			fineObj[fineID]["votes"].push(finevotes[i]);
+		}
+		
+		for(var key in fineObj)
+		{
+			var fine = fineObj[key];
+			var reasonID = fine["fine"]["reasonid"];
+			reasonObj[reasonID]["fines"].push(fine);
+		}
+		
+		var built = [];
+		for(var key in reasonObj)
+		{
+			var reason = reasonObj[key];
+			built.push(reason);
+		}
+		
+		res.send({"data": built});
 	}
-	for(var i = 0; i < reasonvotes.length; i++)
+	catch(err)
 	{
-		var reasonID = reasonvotes[i]["reasonid"];
-		reasonObj[reasonID]["votes"].push(reasonvotes[i]);
+		console.log(err);
+		res.send({"data": []});
 	}
-	
-	var fineObj = {};
-	for(var i = 0; i < fines.length; i++)
+	finally
 	{
-		var fineID = fines[i]["fineid"];
-		fineObj[fineID] = {};
-		fineObj[fineID]["fine"] = fines[i];
-		fineObj[fineID]["votes"] = [];
+		finish(req, res);
 	}
-	for(var i = 0; i < finevotes.length; i++)
-	{
-		var fineID = finevotes[i]["fineid"];
-		fineObj[fineID]["votes"].push(finevotes[i]);
-	}
-	
-	for(var key in fineObj)
-	{
-		var fine = fineObj[key];
-		var reasonID = fine["fine"]["reasonid"];
-		reasonObj[reasonID]["fines"].push(fine);
-	}
-	
-	var built = [];
-	for(var key in reasonObj)
-	{
-		var reason = reasonObj[key];
-		built.push(reason);
-	}
-	
-	res.send({"data": built});
-	
-	finish(req, res);
 }
 
 
 app.post('/addReason', (req, res) => 
 {
-	start(req.body, res);
-	addReason(req.body, res);
+	start(req, res);
+	addReason(req, res);
 });
 async function addReason(req, res)
 {
-	var creatorID = req["creatorID"];
-	var nominationID = req["nominationID"];
-	var description = req["description"];
-	
-	var reason = await insertReason(creatorID, nominationID, description);
-	res.send(reason);
-	
-	finish(req, res);
+	try
+	{
+		var creatorID = req.body["creatorID"];
+		checkType(creatorID, "id");
+		var nominationID = req.body["nominationID"];
+		checkType(nominationID, "id");
+		var description = req.body["description"];
+		checkType(description, "string_ne");
+		
+		description = description.trim();
+		
+		var reason = await insertReason(creatorID, nominationID, description);
+		res.send(reason);
+	}
+	catch(err)
+	{
+		console.log(err);
+		res.send({});
+	}
+	finally
+	{
+		finish(req, res);
+	}
 }
 
 
 app.post('/addFineToReason', (req, res) => 
 {
-	start(req.body, res);
-	addFineToReason(req.body, res);
+	start(req, res);
+	addFineToReason(req, res);
 });
 async function addFineToReason(req, res)
 {
-	var reasonID = req["reasonID"];
-	var creatorID = req["creatorID"];
-	var description = req["description"];
-	
-	var fine = await insertFine(reasonID, creatorID, description);
-	res.send(fine);
-	
-	finish(req, res);
+	try
+	{
+		var reasonID = req.body["reasonID"];
+		checkType(reasonID, "id");
+		var creatorID = req.body["creatorID"];
+		checkType(creatorID, "id");
+		var description = req.body["description"];
+		checkType(description, "string_ne");
+		
+		description = description.trim();
+		
+		var fine = await insertFine(reasonID, creatorID, description);
+		res.send(fine);
+	}
+	catch(err)
+	{
+		console.log(err);
+		res.send({});
+	}
+	finally
+	{
+		finish(req, res);
+	}
 }
+
 
 
 app.post('/toggleReasonVote', (req, res) => 
 {
-	start(req.body, res);
-	toggleReasonVote(req.body, res);
+	start(req, res);
+	toggleReasonVote(req, res);
 });
 async function toggleReasonVote(req, res)
 {
-	var reasonID = req["reasonID"];
-	var voterID = req["voterID"];
-	
-	var length = await selectNumReasonVoteByOther(reasonID, voterID);
-	if(length == 0)
+	try
 	{
-		var reasonvote = await insertReasonVote(reasonID, voterID, "up");
-		res.send(reasonvote);
+		var reasonID = req.body["reasonID"];
+		checkType(reasonID, "id");
+		var voterID = req.body["voterID"];
+		checkType(voterID, "id");
+		
+		var length = await selectNumReasonVoteByOther(reasonID, voterID);
+		if(length == 0)
+		{
+			var reasonvote = await insertReasonVote(reasonID, voterID, "up");
+			res.send(reasonvote);
+		}
+		else
+		{
+			var deletor = await deleteReasonVote(reasonID, voterID);
+			res.send({"status":"deleted"});
+		}
 	}
-	else
+	catch(err)
 	{
-		var deletor = await deleteReasonVote(reasonID, voterID);
-		res.send({"status":"deleted"});
+		console.log(err);
+		res.send({"status":"failed"});
 	}
-	
-	
-	finish(req, res);
+	finally
+	{
+		finish(req, res);
+	}
 }
 
 
@@ -452,28 +749,39 @@ async function toggleReasonVote(req, res)
 
 app.post('/toggleFineVote', (req, res) => 
 {
-	start(req.body, res);
-	toggleFineVote(req.body, res);
+	start(req, res);
+	toggleFineVote(req, res);
 });
 async function toggleFineVote(req, res)
 {
-	var fineID = req["fineID"];
-	var voterID = req["voterID"];
-	
-	var length = await selectNumFineVoteByOther(fineID, voterID);
-	if(length == 0)
+	try
 	{
-		var finevote = await insertFineVote(fineID, voterID, "up");
-		res.send(finevote);
+		var fineID = req.body["fineID"];
+		checkType(fineID, "id");
+		var voterID = req.body["voterID"];
+		checkType(voterID, "id");
+		
+		var length = await selectNumFineVoteByOther(fineID, voterID);
+		if(length == 0)
+		{
+			var finevote = await insertFineVote(fineID, voterID, "up");
+			res.send(finevote);
+		}
+		else
+		{
+			var deletor = await deleteFineVote(fineID, voterID);
+			res.send({"status":"deleted"});
+		}
 	}
-	else
+	catch(err)
 	{
-		var deletor = await deleteFineVote(fineID, voterID);
-		res.send({"status":"deleted"});
+		console.log(err);
+		res.send({"status":"failed"});
 	}
-	
-	
-	finish(req, res);
+	finally
+	{
+		finish(req, res);
+	}
 }
 
 
@@ -481,35 +789,63 @@ async function toggleFineVote(req, res)
 
 app.post('/changeReasonDescription', (req, res) => 
 {
-	start(req.body, res);
-	changeReasonDescription(req.body, res);
+	start(req, res);
+	changeReasonDescription(req, res);
 });
 async function changeReasonDescription(req, res)
 {
-	var reasonID = req["reasonID"];
-	var newDescription = req["newDescription"];
-	
-	var result = await updateReasonDescription(reasonID, newDescription);
-	res.send({"status":"updated"});
-	
-	finish(req, res);
+	try
+	{
+		var reasonID = req.body["reasonID"];
+		checkType(reasonID, "id");
+		var newDescription = req.body["newDescription"];
+		checkType(newDescription, "string_ne");
+		
+		newDescription = newDescription.trim();
+		
+		var result = await updateReasonDescription(reasonID, newDescription);
+		res.send({"status":"updated"});
+	}
+	catch(err)
+	{
+		console.log(err);
+		res.send({"status":"failed"});
+	}
+	finally
+	{
+		finish(req, res);
+	}
 }
 
 
 app.post('/changeFineDescription', (req, res) => 
 {
-	start(req.body, res);
-	changeFineDescription(req.body, res);
+	start(req, res);
+	changeFineDescription(req, res);
 });
 async function changeFineDescription(req, res)
 {
-	var fineID = req["fineID"];
-	var newDescription = req["newDescription"];
-	
-	var result = await updateFineDescription(fineID, newDescription);
-	res.send({"status":"updated"});
-	
-	finish(req, res);
+	try
+	{
+		var fineID = req.body["fineID"];
+		checkType(fineID, "id");
+		var newDescription = req.body["newDescription"];
+		checkType(newDescription, "string_ne");
+		
+		newDescription = newDescription.trim();
+		
+		var result = await updateFineDescription(fineID, newDescription);
+		res.send({"status":"updated"});
+	}
+	catch(err)
+	{
+		console.log(err);
+		res.send({"status":"failed"});
+	}
+	finally
+	{
+		finish(req, res);
+	}
 }
 
 
