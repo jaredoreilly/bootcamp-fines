@@ -304,7 +304,7 @@ function reallyAddReason()
 		url: '/addReason',
 		type: 'POST',
 		contentType: 'application/json',
-		data: JSON.stringify({ creatorID: creatorID, nominationID: nominationID, description: description }),
+		data: JSON.stringify({ creatorID: parseInt(creatorID), nominationID: parseInt(nominationID), description: description }),
 		dataType: 'json',
 		success: function(data)
 		{
@@ -348,7 +348,7 @@ function reallyAddFine()
 		url: '/addFineToReason',
 		type: 'POST',
 		contentType: 'application/json',
-		data: JSON.stringify({ reasonID: reasonID, creatorID: creatorID, description: description }),
+		data: JSON.stringify({ reasonID: parseInt(reasonID), creatorID: parseInt(creatorID), description: description }),
 		dataType: 'json',
 		success: function(data)
 		{
@@ -373,7 +373,7 @@ function toggleReasonVote()
 		url: '/toggleReasonVote',
 		type: 'POST',
 		contentType: 'application/json',
-		data: JSON.stringify({ reasonID: reasonID, voterID: voterID }),
+		data: JSON.stringify({ reasonID: parseInt(reasonID), voterID: parseInt(voterID) }),
 		dataType: 'json',
 		success: function(data)
 		{
@@ -398,7 +398,7 @@ function toggleFineVote()
 		url: '/toggleFineVote',
 		type: 'POST',
 		contentType: 'application/json',
-		data: JSON.stringify({ fineID: fineID, voterID: voterID }),
+		data: JSON.stringify({ fineID: parseInt(fineID), voterID: parseInt(voterID) }),
 		dataType: 'json',
 		success: function(data)
 		{
@@ -436,7 +436,7 @@ function reallyEditReason()
 		url: '/changeReasonDescription',
 		type: 'POST',
 		contentType: 'application/json',
-		data: JSON.stringify({ reasonID: reasonID, newDescription: newDesc }),
+		data: JSON.stringify({ reasonID: parseInt(reasonID), newDescription: newDesc }),
 		dataType: 'json',
 		success: function(data)
 		{
@@ -476,7 +476,7 @@ function reallyEditFine()
 		url: '/changeFineDescription',
 		type: 'POST',
 		contentType: 'application/json',
-		data: JSON.stringify({ fineID: fineID, newDescription: newDesc }),
+		data: JSON.stringify({ fineID: parseInt(fineID), newDescription: newDesc }),
 		dataType: 'json',
 		success: function(data)
 		{
