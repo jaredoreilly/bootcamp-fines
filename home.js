@@ -1,6 +1,48 @@
 
 var entelectuals = null;
 var reasons = null;
+var howToSort = "timeDesc";
+
+function sortReason(a,b)
+{
+	if(howToSort == "timeDesc")
+	{
+		return a["reason"]["createdtime"] > b["reason"]["createdtime"];
+	}
+	else if(howToSort == "timeAsc")
+	{
+		return a["reason"]["createdtime"] < b["reason"]["createdtime"];
+	}
+	else if(howToSort == "agreeDesc")
+	{
+		return a["votes"].length > b["votes"].length;
+	}
+	else if(howToSort == "agreeAsc")
+	{
+		return a["votes"].length < b["votes"].length;
+	}
+}
+
+function sortFine(a,b)
+{
+	if(howToSort == "timeDesc")
+	{
+		return a["fine"]["createdtime"] > b["fine"]["createdtime"];
+	}
+	else if(howToSort == "timeAsc")
+	{
+		return a["fine"]["createdtime"] < b["fine"]["createdtime"];
+	}
+	else if(howToSort == "agreeDesc")
+	{
+		return a["votes"].length > b["votes"].length;
+	}
+	else if(howToSort == "agreeAsc")
+	{
+		return a["votes"].length < b["votes"].length;
+	}
+};
+	
 
 window.onload = function()
 {
@@ -144,10 +186,12 @@ function renderReason(reason)
 	html += '	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 left" style="padding-left:40px">'
 	
 	var fines = reason["fines"];
-	fines.sort((a, b) => (a["votes"].length < b["votes"].length) ? 1 : -1);
-	for(var i = 0; i < fines.length; i++)
+	
+	var copied = JSON.parse(JSON.stringify(fines));
+	copied.sort((a, b) => sortFine(a,b) ? 1 : -1);
+	for(var i = 0; i < copied.length; i++)
 	{
-		var fine = fines[i];
+		var fine = copied[i];
 		var fineHtml = renderFine(fine);
 		html += fineHtml;
 		
@@ -170,11 +214,13 @@ function renderReasons()
 	$("#reasons").empty();
 	console.log(reasons);
 	
-	reasons.sort((a, b) => (a["votes"].length < b["votes"].length) ? 1 : -1);
+	var copied = JSON.parse(JSON.stringify(reasons));
 	
-	for(var i = 0; i < reasons.length; i++)
+	copied.sort((a, b) => sortReason(a,b) ? 1 : -1);
+	
+	for(var i = 0; i < copied.length; i++)
 	{
-		var reason = reasons[i];
+		var reason = copied[i];
 		console.log(reason);
 		var html = renderReason(reason);
 		$("#reasons").append(html);
@@ -486,4 +532,41 @@ function reallyEditFine()
 			$("#editFine").attr("disabled", false);
 		}
 	});
+}
+
+
+
+function sortTime()
+{
+	if(howToSort == "timeAsc")
+	{
+		howToSort = "timeDesc";
+	}
+	else if(howToSort == "timeDesc")
+	{
+		howToSort = "timeAsc";
+	}
+	else
+	{
+		howToSort = "timeDesc";
+	}
+	renderReasons();
+}
+
+
+function sortAgree()
+{
+	if(howToSort == "agreeAsc")
+	{
+		howToSort = "agreeDesc";
+	}
+	else if(howToSort == "agreeDesc")
+	{
+		howToSort = "agreeAsc";
+	}
+	else
+	{
+		howToSort = "agreeAsc";
+	}
+	renderReasons();
 }
