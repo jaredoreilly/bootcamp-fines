@@ -7,19 +7,19 @@ function sortReason(a,b)
 {
 	if(howToSort == "timeDesc")
 	{
-		return a["reason"]["createdtime"] > b["reason"]["createdtime"];
+		return a["reason"]["createdtime"] < b["reason"]["createdtime"];
 	}
 	else if(howToSort == "timeAsc")
 	{
-		return a["reason"]["createdtime"] < b["reason"]["createdtime"];
+		return a["reason"]["createdtime"] > b["reason"]["createdtime"];
 	}
 	else if(howToSort == "agreeDesc")
 	{
-		return a["votes"].length > b["votes"].length;
+		return a["votes"].length < b["votes"].length;
 	}
 	else if(howToSort == "agreeAsc")
 	{
-		return a["votes"].length < b["votes"].length;
+		return a["votes"].length > b["votes"].length;
 	}
 }
 
@@ -27,19 +27,19 @@ function sortFine(a,b)
 {
 	if(howToSort == "timeDesc")
 	{
-		return a["fine"]["createdtime"] > b["fine"]["createdtime"];
+		return a["fine"]["createdtime"] < b["fine"]["createdtime"];
 	}
 	else if(howToSort == "timeAsc")
 	{
-		return a["fine"]["createdtime"] < b["fine"]["createdtime"];
+		return a["fine"]["createdtime"] > b["fine"]["createdtime"];
 	}
 	else if(howToSort == "agreeDesc")
 	{
-		return a["votes"].length > b["votes"].length;
+		return a["votes"].length < b["votes"].length;
 	}
 	else if(howToSort == "agreeAsc")
 	{
-		return a["votes"].length < b["votes"].length;
+		return a["votes"].length > b["votes"].length;
 	}
 };
 	
