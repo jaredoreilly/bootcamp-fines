@@ -7,7 +7,7 @@ var assert = require('assert');
 
 const { Client } = require('pg');
 const client = new Client({
-  connectionString: process.env.DATABASE_URL || "postgres://ngvprpzhfruykh:28297b44d5b851c2c7afdcbbb49a78680812c4cc1d1985ffaafb04fad31f41c6@ec2-79-125-93-182.eu-west-1.compute.amazonaws.com:5432/darqu86ut075r6",
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
