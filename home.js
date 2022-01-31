@@ -1,7 +1,7 @@
 
 var entelectuals = null;
 var reasons = null;
-var howToSort = "timeAsc";
+var howToSort = "timeDesc";
 
 function sortReason(a,b)
 {
@@ -188,7 +188,7 @@ function renderReason(reason)
 	var fines = reason["fines"];
 	
 	var copied = JSON.parse(JSON.stringify(fines));
-	copied.sort((a, b) => sortFine(a,b) ? 1 : -1);
+	copied.sort((a, b) => sortFine(a,b) ? -1 : 1);
 	for(var i = 0; i < copied.length; i++)
 	{
 		var fine = copied[i];
@@ -216,7 +216,7 @@ function renderReasons()
 	
 	var copied = JSON.parse(JSON.stringify(reasons));
 	
-	copied.sort((a, b) => sortReason(a,b) ? 1 : -1);
+	copied.sort((a, b) => sortReason(a,b) ? -1 : 1);
 	
 	for(var i = 0; i < copied.length; i++)
 	{
@@ -548,7 +548,7 @@ function sortTime()
 	}
 	else
 	{
-		howToSort = "timeAsc";
+		howToSort = "timeDesc";
 	}
 	renderReasons();
 }
